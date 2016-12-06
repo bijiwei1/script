@@ -14,7 +14,7 @@ except IndexError:
 
 inRoot = '/scratch/jiwei/proximate-tests/unit_tests/'
 outRoot = '/scratch/jiwei/proximate-tests/unit_tests/'
-tabby = '/scratch/jiwei/tabby/src/tb/'
+simPath =  '/scratch/jiwei/mpu-riscv/src/'
 
 if not os.path.exists(inRoot):
    print ("Test folder doesn't exist")
@@ -26,7 +26,7 @@ for x in subdir:
    if x == test:
       testDir = os.path.join(inRoot,test) + '/'
       outPath = testDir + 'bin/'
-      outFile = outPath+ 'core_result'
+      outFile = outPath+ 'mpu_sim_result'
       #check if bin folder exist or not
       if not os.path.exists(outPath):
    	os.mkdir(outPath)
@@ -49,11 +49,9 @@ for x in subdir:
          quit()
 
       print 'Running test:',testDir
-      args1 = '+TEST=bare'
-      args2 = '+IN=' +testDir
-      args3 = '+OUT='+outPath
+      shutil.copyfile (testDir+'bare', simPath+'bare')
       with open(outFile, "w") as output:
-	p1 =subprocess.call(['simv', args1, args2, args3],cwd=tabby , stderr = output, stdout = output)
+	p1 =subprocess.call(['mpu_riscv_sim'],cwd=simPath , stderr = output, stdout = output)
 	print(test + " FINISHED")
 
 sys.exit()
