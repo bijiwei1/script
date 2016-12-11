@@ -164,4 +164,116 @@ def sim_test (testDir,testName, simPath):
 
 		 return 
 
+#check all tests in current folder
+def check_all_tests (root,testFolder,mode):
+   currDir = os.path.join(root, testFolder)
+   subdir = [dY for dY in os.listdir(currDir) if os.path.isdir(os.path.join(currDir,dY))] 	
+   for x in subdir:
+	if x == '.git':
+		print 'found a git'
+		continue	
+   	testDir = os.path.join(currDir,x)+'/' 
+	print 'current folder:', testDir 
+	
+	if find_folder(testDir):
+	  	check_test(testDir,x, mode)		 
+	else:
+		check_all_tests(currDir,x ,mode)
+   return
+
+
+#simulate specific test in current folder 
+def check_unit_test (root, testFolder, testName, mode):   
+   currDir = os.path.join(root, testFolder)
+   subdir = [dY for dY in os.listdir(currDir) if os.path.isdir(os.path.join(currDir,dY))] 	
+   for x in subdir:
+	if x == '.git':
+		print 'found a git'
+		continue	
+   	testDir = os.path.join(currDir,x)+'/' 
+	print 'current folder:', testDir 
+	
+	if find_folder(testDir) and x == testName:
+	  	check_test(testDir,x,mode)		 
+	else:
+		check_unit_test(currDir,x ,testName, mode)
+   return
+
+
+def check_test (testDir,testName, mode):
+		outPath = testDir + 'out/'
+                simFile = outPath+ 'mpu_sim_result'
+	     	coreFile = outPath + 'core_result'
+                compFile = outPath + 'compare_result'
+		#check if out folder exist or not
+                if not os.path.exists(outPath):
+   	           os.mkdir(outPath)
+	
+		#check if both files for simulator and our core exists
+		if not os.path.exists(simFile):
+		   print "Result from simulator doesn't exist"
+
+		if not os.path.exists(coreFile):
+		   print "Result from core doesn't exist"
+		
+		if os.path.exists(compFile):
+		   os.remove(compFile)
+
+		f3 = open (compFile, 'w')   #file records result from comparison
+
+		f1 = open (coreFile, 'r')
+		f2 = open (simFile, 'r')
+		
+		line1 = f1.readline()
+		line2 = f2.readline()
+		
+		beginstr = 'core   0: 0x0000000000000200'
+		endstr = '(0x0000006f)'
+
+		#find the line where instruction starts
+		while (beginstr not in line1):
+			line1 = f1.readline()
+		
+		print 'starting line', line1	
+		
+		while (endstr not in line2):
+			if (not comp_line(mode, line1, line2)):
+				f3.write ("Failed")
+				print testName, ' has already been checked and FAILED'
+				return;	
+			line1 = f1.readline()
+			line2 = f2.readline()
+	
+		f3.write("Passed")
+		print testName, ' has already been checked and PASSED'
+		return 
+
+
+def comp_line (mode, l1, l2):
+	if mode == '64':
+		return l1 == l2
+
+	#check only lower 32 bits
+	
+	if ('core' not in l1):
+	        s1 = l1.split()
+       		s2 = l2.split()
+		i =0
+		for x in s1:
+		        print x, 'AND', s2[i]
+		   	if i == len(s1)-1:
+		       	   immd1 = s1[len(s1)-1][10:] 
+			   immd2 = s2[len(s1)-1][10:]
+			   print immd1, 'AND', immd2
+			   if immd1 != immd2:
+				  return False
+		      	elif x != s2[i]:
+			   return False
+			else:
+			     i = i+1
+		return True
+	else:
+	  	print 'Checked Line', l1, 'And', l2		
+		return l1 == l2 
+					
 
