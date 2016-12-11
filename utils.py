@@ -182,6 +182,24 @@ def check_all_tests (root,testFolder,mode):
    return
 
 
+#check  all tests in current folder
+def check_all_tests (root,testFolder,mode):
+   currDir = os.path.join(root, testFolder)
+   subdir = [dY for dY in os.listdir(currDir) if os.path.isdir(os.path.join(currDir,dY))] 	
+   for x in subdir:
+	if x == '.git':
+		print 'found a git'
+		continue	
+   	testDir = os.path.join(currDir,x)+'/' 
+	print 'current folder:', testDir 
+	
+	if find_folder(testDir):
+	  	check_test(testDir,x,mode)		 
+	else:
+		check_all_tests(currDir,x ,mode)
+   return
+
+
 #simulate specific test in current folder 
 def check_unit_test (root, testFolder, testName, mode):   
    currDir = os.path.join(root, testFolder)
@@ -198,7 +216,6 @@ def check_unit_test (root, testFolder, testName, mode):
 	else:
 		check_unit_test(currDir,x ,testName, mode)
    return
-
 
 def check_test (testDir,testName, mode):
 		outPath = testDir + 'out/'
@@ -234,8 +251,6 @@ def check_test (testDir,testName, mode):
 		while (beginstr not in line1):
 			line1 = f1.readline()
 		
-		print 'starting line', line1	
-		
 		while (endstr not in line2):
 			if (not comp_line(mode, line1, line2)):
 				f3.write ("Failed")
@@ -260,11 +275,11 @@ def comp_line (mode, l1, l2):
        		s2 = l2.split()
 		i =0
 		for x in s1:
-		        print x, 'AND', s2[i]
+	#	        print x, 'AND', s2[i]
 		   	if i == len(s1)-1:
 		       	   immd1 = s1[len(s1)-1][10:] 
 			   immd2 = s2[len(s1)-1][10:]
-			   print immd1, 'AND', immd2
+	#		   print immd1, 'AND', immd2
 			   if immd1 != immd2:
 				  return False
 		      	elif x != s2[i]:
@@ -273,7 +288,7 @@ def comp_line (mode, l1, l2):
 			     i = i+1
 		return True
 	else:
-	  	print 'Checked Line', l1, 'And', l2		
+	 # 	print 'Checked Line', l1, 'And', l2		
 		return l1 == l2 
 					
 
