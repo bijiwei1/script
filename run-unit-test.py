@@ -5,59 +5,42 @@ import os
 import sys
 import shutil
 
+from utils import run_unit_test
 
 try:
-   test = sys.argv[1]
+   testName = sys.argv[1]
 except IndexError:
    print("Did not enter a test name")
    quit()
 
-inRoot = '/scratch/jiwei/proximate-tests/'
-outRoot = '/scratch/jiwei/proximate-tests/'
-tabby = '/scratch/jiwei/tabby/src/tb/'
+os.environ["TESTPATH"]
+os.environ["COREPATH"] 
+inRoot = os.environ["TESTPATH"]
+outRoot =  os.environ["TESTPATH"]
+tabby = os.environ['COREPATH']
 
 if not os.path.exists(inRoot):
    print ("Test folder doesn't exist")
    quit()
-	
-testSet = [dI for dI in os.listdir(inRoot) if os.path.isdir(os.path.join(inRoot,dI))] 	
 
-for y in testSet:
-        currDir = os.path.join(inRoot,y) 
-	subdir = [dY for dY in os.listdir(currDir) if os.path.isdir(os.path.join(currDir,dY))] 	
-	for x in subdir:
-	   if x == test:
-              testDir = os.path.join(currDir,test)+'/' 
-              outPath = testDir + 'bin/'
-              outFile = outPath+ 'core_result'
-	     	
-              #check if bin folder exist or not
-              if not os.path.exists(outPath):
-   	         os.mkdir(outPath)
-	
-              #remove output files in bin folder	
-              try:
-    	         os.remove(outFile)
-              except OSError:
-     	         pass  
-      
-              try:
-       	         os.remove(outPath+'bare_stat.cvs')
-              except OSError:
-                 pass  
-      
-              try:
-                 p1 =subprocess.call(['make'], cwd=testDir)
-              except:
-                 print("Test has problem") 
-                 quit()
+#check if testpath is correct or not	
+try:
+   testSet = [dI for dI in os.listdir(inRoot) if os.path.isdir(os.path.join(inRoot,dI))] 	
+except OSError:
+   print ("You did not setup TESTPATH or your TESTPATH is not valid")
+   quit()
 
-              print 'Running test:',testDir
-              args1 = '+TEST=bare'
-              args2 = '+IN=' +testDir
-              args3 = '+OUT='+outPath
-              with open(outFile, "w") as output:
-	         p1 =subprocess.call(['simv', args1, args2, args3],cwd=tabby , stderr = output, stdout = output)
-	         print(test + " FINISHED")
+#check if corepath is correct or not	
+if not os.path.isfile(tabby+ 'simv'):
+   print ("You did not setup COREPATH or your COREPATH is not valid")
+   quit()
+
+for x in testSet:
+   if x == '.git':
+      print 'found a git'
+      continue	
+   run_unit_test(inRoot, x, tabby,testName)
+
+
 
 sys.exit()

@@ -1,0 +1,29 @@
+Hi, 
+
+This is an python script suite that can run tests for core or simulator tools and compare the output values. 
+
+Instructions to use scripts:
+
+For core:
+	Need to set TESTPATH to the path of top test folder where all tests are located 
+ 		- EX: export TESTPATH=/testtopfolder/
+	Need to set COREPATH to the path of executable file of core 
+		- Ex: export COREPATH=/tabbycorefolder/
+	1) run-all-tests.py 
+		- this script can run all tests in test folder
+		- no input needed
+	2) run-unit-tests.py 
+		- this script can run a unit test with certain name
+		- input test name    EX: ./run-unit-tests,py add
+
+For simulator:
+	Need to set TESTPATH to the path of top test folder where all tests are located
+	Need to set SIMPATH to the path of executable file of simulator
+	
+	1) sim-all-tests.py 
+		- this script can run all tests in test folder
+		- no input needed
+	2) sim-unit-test.py
+		- this script can run a unit test with certain name
+		- input test name    EX: ./run-unit-tests,py add
+
