@@ -27,3 +27,21 @@ For simulator:
 		- this script can run a unit test with certain name
 		- input test name    EX: ./run-unit-tests,py add
 
+Check output and results:
+	Need to set TESTPATH to the path of top test folder where all tests are located
+	
+	1) check-all-tests.py
+		- this script can compare the outputs from simulator and core for all the tests
+		- input 32 or 64 to indicate instruction type  
+			-Ex:./check-all-tests.py 32    
+	        - 32 would check only lower 32 bits immediate for each instruciton	
+	2) check-unit-test.py
+		- this script can compare the outputs from simulator and core for specific test
+		- input 32 or 64 to indicate instruction type 
+	        - input test name
+			- Ex: ./check-all-tests.py add 32    
+	        - 32 would check only lower 32 bits immediate for each instruciton	
+
+Note: 
+   All output file would be in the 'out' folder below each test's folder
+

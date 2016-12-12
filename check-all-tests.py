@@ -6,6 +6,7 @@ import sys
 import shutil
 
 from utils import check_all_tests
+from utils import counter
 
 
 try:
@@ -35,6 +36,8 @@ for x in testSet:
       continue	
    check_all_tests(inRoot,x, mode)
 
+print 'Finish checking all test'	
+print 'Summary: Total test: ', counter.total_cnt, ' Passed tests: ', counter.pass_cnt, ' Failed tests: ', counter.fail_cnt
 
 
 sys.exit()

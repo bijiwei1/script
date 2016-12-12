@@ -5,6 +5,11 @@ import os
 import sys
 import shutil
 
+class counter ():
+	pass_cnt = 0
+	fail_cnt = 0
+	total_cnt = 0
+
 
 #find the folder in the botton level where all tests are 
 def find_folder (currdir):
@@ -83,11 +88,12 @@ def run_test (testDir,testName,tabby):
                  args3 = '+OUT='+outPath
                  with open(outFile, "w") as output:
 	            try:
-		        p1 =subprocess.call(['simv', args1, args2, args3],cwd=tabby , stderr = output, stdout = output)
+		        p1 =subprocess.call(['simv', args1, args2, args3],cwd=tabby , stderr = output, stdout = output, timeout = 60)
 			print(testName + " FINISHED")
 	            except OSError:
 		        print ("Failed test running")
-
+		    except TimeoutExpired:
+		    	print testName, 'TIMEOUT'
 		 return 
 
 
@@ -255,12 +261,16 @@ def check_test (testDir,testName, mode):
 			if (not comp_line(mode, line1, line2)):
 				f3.write ("Failed")
 				print testName, ' has already been checked and FAILED'
+				counter.fail_cnt = counter.fail_cnt + 1;
+				counter.total_cnt = counter.total_cnt + 1;
 				return;	
 			line1 = f1.readline()
 			line2 = f2.readline()
 	
 		f3.write("Passed")
 		print testName, ' has already been checked and PASSED'
+		counter.pass_cnt = counter.fail_cnt + 1;
+		counter.total_cnt = counter.total_cnt + 1;
 		return 
 
 
@@ -269,17 +279,14 @@ def comp_line (mode, l1, l2):
 		return l1 == l2
 
 	#check only lower 32 bits
-	
 	if ('core' not in l1):
 	        s1 = l1.split()
        		s2 = l2.split()
 		i =0
 		for x in s1:
-	#	        print x, 'AND', s2[i]
 		   	if i == len(s1)-1:
 		       	   immd1 = s1[len(s1)-1][10:] 
 			   immd2 = s2[len(s1)-1][10:]
-	#		   print immd1, 'AND', immd2
 			   if immd1 != immd2:
 				  return False
 		      	elif x != s2[i]:
@@ -288,7 +295,6 @@ def comp_line (mode, l1, l2):
 			     i = i+1
 		return True
 	else:
-	 # 	print 'Checked Line', l1, 'And', l2		
 		return l1 == l2 
 					
 

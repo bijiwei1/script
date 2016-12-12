@@ -6,7 +6,6 @@ import sys
 import shutil
 
 from utils import run_all_tests
-
 os.environ["TESTPATH"]
 os.environ["COREPATH"] 
 inRoot = os.environ["TESTPATH"]
